@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 Student Management</title>
+    <style>
+        /* ---------- গ্লোবাল রিসেট ও ফন্ট ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---------- হেডার ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .student-count {
+            background: #667eea;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        /* ---------- স্টুডেন্ট লিস্ট (কার্ড) ---------- */
+        #studentsList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        #studentsList::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #studentsList::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .student-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            border-left: 6px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .student-card:hover {
+            transform: translateX(6px) scale(1.01);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+            border-left-color: #764ba2;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .student-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .student-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .student-detail {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .student-detail span {
+            margin-right: 15px;
+        }
+
+        .student-detail i {
+            margin-right: 4px;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .delete-btn:hover {
+            background: #e03131;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(255, 107, 107, 0.5);
+        }
+
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: #888;
+            padding: 30px 0;
+            font-size: 16px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ---------- ফর্ম সেকশন ---------- */
+        .form-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px dashed #e0e0e0;
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .form-group input {
+            flex: 1 1 180px;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ---------- টোস্ট নোটিফিকেশন ---------- */
+        .toast {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: #1a1a2e;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 999;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 6px solid #2ecc71;
+        }
+
+        .toast.error {
+            border-left: 6px solid #e74c3c;
+        }
+
+        .toast .toast-icon {
+            font-size: 24px;
+        }
+
+        /* ---------- রেসপন্সিভ ---------- */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 22px;
+            }
+
+            .student-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .delete-btn {
+                align-self: flex-end;
+            }
+
+            .form-group input {
+                flex: 1 1 100%;
+            }
+
+            .submit-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .toast {
+                top: 15px;
+                right: 15px;
+                left: 15px;
+                max-width: none;
+                font-size: 14px;
+                padding: 14px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- টোস্ট মেসেজ কন্টেইনার -->
+    <div id="toast" class="toast">
+        <span class="toast-icon">✅</span>
+        <span id="toastMessage">Success</span>
+    </div>
+
+    <div class="container">
+
+        <!-- হেডার -->
+        <div class="header">
+            <h2>🎓 Student Management</h2>
+            <span class="student-count" id="studentCount">0 Students</span>
+        </div>
+
+        <!-- স্টুডেন্ট লিস্ট -->
+        <div id="studentsList">
+            <div class="empty-msg">👀 No students yet. Add one below!</div>
+        </div>
+
+        <!-- ফর্ম সেকশন -->
+        <div class="form-section">
+            <div class="form-title">➕ Add New Student</div>
+            <div class="form-group">
+                <input type="text" id="nameInput" placeholder="👤 Full Name">
+                <input type="email" id="emailInput" placeholder="📧 Email Address">
+                <input type="text" id="deptInput" placeholder="🏛️ Department">
+                <button class="submit-btn" onclick="createStudent()">
+                    <span>➕</span> Submit
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api/students';
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // ---------- টোস্ট ফাংশন ----------
+        function showToast(message, type = 'success') {
+            toast.className = 'toast';
+            toast.classList.add(type);
+            toastMessage.textContent = message;
+            toast.querySelector('.toast-icon').textContent = type === 'success' ? '✅' : '❌';
+            // ক্লাস রিমুভ করে আবার অ্যাড করলে অ্যানিমেশন রিফ্রেশ হয়
+            toast.classList.remove('show');
+            // সামান্য delay দিয়ে show ক্লাস যোগ করি
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+
+            // ৩ সেকেন্ড পর অটো হাইড
+            clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ---------- স্টুডেন্ট লোড ----------
+        async function loadStudents() {
+            try {
+                const res = await fetch(API_BASE);
+                const json = await res.json();
+                const container = document.getElementById('studentsList');
+                const countEl = document.getElementById('studentCount');
+
+                if (json.success && json.data.length > 0) {
+                    // প্রতিটি কার্ডের জন্য অ্যানিমেশন ডেলay
+                    let delay = 0;
+                    container.innerHTML = json.data.map((s, index) => {
+                        const animationDelay = index * 0.08;
+                        return `
+                            <div class="student-card" style="animation-delay: ${animationDelay}s;">
+                                <div class="student-info">
+                                    <div class="student-name">${s.name}</div>
+                                    <div class="student-detail">
+                                        <span>📧 ${s.email}</span>
+                                        <span>🏛️ ${s.department}</span>
+                                    </div>
+                                </div>
+                                <button class="delete-btn" onclick="deleteStudent(${s.id})">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                    countEl.textContent = `${json.data.length} Students`;
+                } else {
+                    container.innerHTML = `<div class="empty-msg">👀 No students yet. Add one below!</div>`;
+                    countEl.textContent = '0 Students';
+                }
+            } catch (error) {
+                showToast('Error loading students: ' + error.message, 'error');
+            }
+        }
+
+        // ---------- স্টুডেন্ট ক্রিয়েট ----------
+        async function createStudent() {
+            const name = document.getElementById('nameInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            const department = document.getElementById('deptInput').value.trim();
+
+            if (!name || !email || !department) {
+                showToast('Please fill all fields!', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, department })
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    document.getElementById('nameInput').value = '';
+                    document.getElementById('emailInput').value = '';
+                    document.getElementById('deptInput').value = '';
+                    loadStudents();
+                } else {
+                    let errMsg = json.message;
+                    if (json.data) {
+                        const details = Object.values(json.data).join(', ');
+                        errMsg += ': ' + details;
+                    }
+                    showToast(errMsg, 'error');
+                }
+            } catch (error) {
+                showToast('Network Error: ' + error.message, 'error');
+            }
+        }
+
+        // ---------- স্টুডেন্ট ডিলিট ----------
+        async function deleteStudent(id) {
+            if (!confirm('Are you sure you want to delete this student?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    loadStudents();
+                } else {
+                    showToast(json.message, 'error');
+                }
+            } catch (error) {
+                showToast('Network Error: ' + error.message, 'error');
+            }
+        }
+
+        // ---------- পেজ লোড হলে ----------
+        loadStudents();
+    </script>
+
+</body>
+</html>

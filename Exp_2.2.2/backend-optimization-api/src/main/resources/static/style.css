@@ -1,0 +1,174 @@
+* {
+
+    box-sizing:
+        border-box;
+
+}
+
+
+body {
+
+    margin:
+        0;
+
+    padding:
+        30px;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    background:
+        #f4f6f9;
+
+}
+
+
+.container {
+
+    max-width:
+        1000px;
+
+    margin:
+        auto;
+
+}
+
+
+header {
+
+    text-align:
+        center;
+
+    margin-bottom:
+        30px;
+
+}
+
+
+.card {
+
+    background:
+        white;
+
+    padding:
+        25px;
+
+    margin-bottom:
+        20px;
+
+    border-radius:
+        10px;
+
+    box-shadow:
+        0 4px 10px
+        rgba(
+            0,
+            0,
+            0,
+            0.08
+        );
+
+}
+
+
+input {
+
+    padding:
+        12px;
+
+    margin:
+        5px;
+
+    border:
+        1px solid #ccc;
+
+    border-radius:
+        6px;
+
+}
+
+
+button {
+
+    padding:
+        12px 20px;
+
+    margin:
+        5px;
+
+    border:
+        none;
+
+    border-radius:
+        6px;
+
+    cursor:
+        pointer;
+
+    background:
+        #2563eb;
+
+    color:
+        white;
+
+}
+
+
+button:hover {
+
+    background:
+        #1d4ed8;
+
+}
+
+
+.button-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(
+                180px,
+                1fr
+            )
+        );
+
+}
+
+
+pre {
+
+    background:
+        #111827;
+
+    color:
+        #e5e7eb;
+
+    padding:
+        20px;
+
+    border-radius:
+        8px;
+
+    overflow:
+        auto;
+
+    min-height:
+        200px;
+
+}
+
+
+#performance {
+
+    font-weight:
+        bold;
+
+    margin-bottom:
+        15px;
+
+}

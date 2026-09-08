@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Backend Optimization Dashboard
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <header>
+
+        <h1>
+            Backend Optimization Dashboard
+        </h1>
+
+        <p>
+            N+1 Query | JOIN FETCH | Cache | Native SQL
+        </p>
+
+    </header>
+
+
+    <!-- Department -->
+
+    <section class="card">
+
+        <h2>
+            Add Department
+        </h2>
+
+
+        <input
+            id="departmentName"
+            placeholder="Department Name"
+        >
+
+
+        <button
+            onclick="addDepartment()"
+        >
+            Add Department
+        </button>
+
+    </section>
+
+
+    <!-- Student -->
+
+    <section class="card">
+
+        <h2>
+            Add Student
+        </h2>
+
+
+        <input
+            id="studentName"
+            placeholder="Student Name"
+        >
+
+
+        <input
+            id="studentUID"
+            placeholder="Student UID"
+        >
+
+
+        <input
+            id="studentAge"
+            type="number"
+            placeholder="Age"
+        >
+
+
+        <input
+            id="departmentId"
+            type="number"
+            placeholder="Department ID"
+        >
+
+
+        <button
+            onclick="addStudent()"
+        >
+            Add Student
+        </button>
+
+    </section>
+
+
+    <!-- API Buttons -->
+
+    <section class="card">
+
+        <h2>
+            Performance Tests
+        </h2>
+
+
+        <div class="button-grid">
+
+
+            <button
+                onclick="testNormal()"
+            >
+                Normal Query
+            </button>
+
+
+            <button
+                onclick="testOptimized()"
+            >
+                JOIN FETCH
+            </button>
+
+
+            <button
+                onclick="testNative()"
+            >
+                Native SQL
+            </button>
+
+
+            <button
+                onclick="testCache()"
+            >
+                Cached Student
+            </button>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- Result -->
+
+    <section class="card">
+
+
+        <h2>
+            API Result
+        </h2>
+
+
+        <div
+            id="performance"
+        >
+        </div>
+
+
+        <pre
+            id="result"
+        >
+Click an API button to view data
+        </pre>
+
+
+    </section>
+
+
+</div>
+
+
+<script
+    src="script.js"
+></script>
+
+
+</body>
+
+</html>

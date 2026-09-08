@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Student Management System</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="container">
+
+
+        <header>
+
+            <h1>🎓 Student Management System</h1>
+
+            <p>
+                Pagination and Sorting using Spring Boot
+            </p>
+
+        </header>
+
+
+        <!-- Student Registration Form -->
+
+        <section class="card">
+
+            <h2>Add New Student</h2>
+
+
+            <form id="studentForm">
+
+
+                <!-- Name -->
+
+                <div class="form-group">
+
+                    <label for="name">
+
+                        Student Name
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Enter student name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- UID -->
+
+                <div class="form-group">
+
+                    <label for="uid">
+
+                        UID
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="uid"
+                        placeholder="Enter university UID"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Department -->
+
+                <div class="form-group">
+
+                    <label for="department">
+
+                        Department
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="department"
+                        placeholder="Example: CSE AI/ML"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Year -->
+
+                <div class="form-group">
+
+                    <label for="year">
+
+                        Year
+
+                    </label>
+
+                    <select
+                        id="year"
+                        required
+                    >
+
+                        <option value="">
+
+                            Select Year
+
+                        </option>
+
+                        <option value="1">
+
+                            1st Year
+
+                        </option>
+
+                        <option value="2">
+
+                            2nd Year
+
+                        </option>
+
+                        <option value="3">
+
+                            3rd Year
+
+                        </option>
+
+                        <option value="4">
+
+                            4th Year
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Age -->
+
+                <div class="form-group">
+
+                    <label for="age">
+
+                        Age
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="age"
+                        placeholder="Enter age"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- University -->
+
+                <div class="form-group">
+
+                    <label for="universityName">
+
+                        University Name
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="universityName"
+                        placeholder="Enter university name"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="add-button"
+                >
+
+                    + Add Student
+
+                </button>
+
+
+            </form>
+
+        </section>
+
+
+        <!-- Student Records -->
+
+        <section class="card">
+
+
+            <h2>Student Records</h2>
+
+
+            <!-- Pagination and Sorting Controls -->
+
+            <div class="controls">
+
+
+                <div class="control-group">
+
+                    <label for="pageSize">
+
+                        Students Per Page
+
+                    </label>
+
+                    <select id="pageSize">
+
+                        <option value="3">
+
+                            3
+
+                        </option>
+
+                        <option
+                            value="5"
+                            selected
+                        >
+
+                            5
+
+                        </option>
+
+                        <option value="10">
+
+                            10
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Sort By -->
+
+                <div class="control-group">
+
+                    <label for="sortBy">
+
+                        Sort By
+
+                    </label>
+
+                    <select id="sortBy">
+
+                        <option value="id">
+
+                            ID
+
+                        </option>
+
+                        <option value="name">
+
+                            Name
+
+                        </option>
+
+                        <option value="uid">
+
+                            UID
+
+                        </option>
+
+                        <option value="department">
+
+                            Department
+
+                        </option>
+
+                        <option value="year">
+
+                            Year
+
+                        </option>
+
+                        <option value="age">
+
+                            Age
+
+                        </option>
+
+                        <option value="universityName">
+
+                            University
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Direction -->
+
+                <div class="control-group">
+
+                    <label for="direction">
+
+                        Direction
+
+                    </label>
+
+                    <select id="direction">
+
+                        <option value="asc">
+
+                            Ascending
+
+                        </option>
+
+                        <option value="desc">
+
+                            Descending
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <button id="applyButton">
+
+                    Apply
+
+                </button>
+
+
+            </div>
+
+
+            <!-- Student Table -->
+
+            <div class="table-container">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>UID</th>
+                            <th>Department</th>
+                            <th>Year</th>
+                            <th>Age</th>
+                            <th>University</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody
+                        id="studentTableBody"
+                    >
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+            <!-- Pagination -->
+
+            <div class="pagination">
+
+
+                <button id="previousButton">
+
+                    ← Previous
+
+                </button>
+
+
+                <span id="pageInfo">
+
+                    Page 1
+
+                </span>
+
+
+                <button id="nextButton">
+
+                    Next →
+
+                </button>
+
+
+            </div>
+
+
+            <div id="message"></div>
+
+
+        </section>
+
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/BackendOptimizationApiApplication.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/controller/DepartmentController.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/controller/StudentController.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/dto/StudentResponse.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/entity/Department.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/entity/Student.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/repository/DepartmentRepository.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/repository/StudentRepository.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/service/DepartmentService.java
+/home/probal/Desktop/5th Sem/FS-II/Exp_2.2.2/backend-optimization-api/src/main/java/com/probal/backend_optimization_api/service/StudentService.java

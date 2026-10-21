@@ -1,0 +1,41 @@
+services:
+  stable:
+    build: .
+    image: cd-canary-demo:stable
+    environment:
+      APP_VERSION: "1.0.0"
+      APP_RELEASE: "stable"
+    expose:
+      - "8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "java", "-version"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  canary:
+    build: .
+    image: cd-canary-demo:canary
+    environment:
+      APP_VERSION: "2.0.0"
+      APP_RELEASE: "canary"
+    expose:
+      - "8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "java", "-version"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  proxy:
+    image: nginx:1.28-alpine
+    ports:
+      - "8088:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - stable
+      - canary
+    restart: unless-stopped

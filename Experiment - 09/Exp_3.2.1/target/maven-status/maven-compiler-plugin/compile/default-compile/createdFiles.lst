@@ -1,0 +1,6 @@
+com/experiment/ci/service/ItemService.class
+com/experiment/ci/model/Item.class
+com/experiment/ci/repository/ItemRepository.class
+com/experiment/ci/repository/JdbcItemRepository.class
+com/experiment/ci/CiTestingLabApplication.class
+com/experiment/ci/controller/ItemController.class

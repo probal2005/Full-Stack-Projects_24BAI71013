@@ -1,0 +1,4 @@
+com/experiment/ci/service/ItemServiceTest.class
+com/experiment/ci/integration/PostgresContainerIntegrationTest.class
+com/experiment/ci/controller/ItemControllerIntegrationTest.class
+com/experiment/ci/contract/ItemApiContractTest.class

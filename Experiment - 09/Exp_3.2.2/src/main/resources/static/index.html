@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeployFlow | Continuous Deployment</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg:#0a0f1d; --panel:#111a2c; --line:#26344d;
+  --text:#edf3ff; --muted:#93a4c2; --blue:#70a5ff;
+  --green:#4adea5; --purple:#b49aff; --orange:#ffbf69;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#17274a 0%,var(--bg) 55%);
+font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--text);min-height:100vh}
+header{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;
+justify-content:space-between;padding:0 6%;background:#0a0f1ddd;position:sticky;top:0;z-index:2}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:19px}
+.logo{background:linear-gradient(135deg,#70a5ff,#a58aff);padding:9px 12px;border-radius:12px;color:#071126}
+nav{display:flex;align-items:center;gap:22px;color:var(--muted);font-size:13px}
+.pill{border:1px solid #24654f;background:#123629;color:var(--green);border-radius:30px;padding:7px 12px;font-size:12px}
+main{max-width:1180px;margin:0 auto;padding:48px 24px 70px}
+.eyebrow{color:var(--blue);font-size:12px;letter-spacing:2px;font-weight:800;text-transform:uppercase}
+h1{font-size:clamp(32px,5vw,52px);line-height:1.08;letter-spacing:-2px;margin:14px 0}
+h1 span{color:var(--blue)}
+.subtitle{color:var(--muted);line-height:1.7;max-width:650px}
+.hero{display:flex;align-items:flex-start;justify-content:space-between;gap:28px;margin-bottom:36px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+button{cursor:pointer;border:1px solid var(--line);border-radius:10px;background:#17233a;color:var(--text);
+padding:11px 15px;font-weight:650}
+button.primary{background:var(--blue);color:#071126;border-color:var(--blue)}
+button:hover{filter:brightness(1.12)}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:25px 0}
+.card{background:linear-gradient(145deg,#141f34,#101828);border:1px solid var(--line);border-radius:17px;padding:21px;min-width:0}
+.metric-label{color:var(--muted);font-size:12px}
+.metric{font-size:28px;font-weight:800;margin:14px 0 8px;overflow-wrap:anywhere}
+.small{font-size:12px;color:var(--muted)}
+.green{color:var(--green)}.blue{color:var(--blue)}.purple{color:var(--purple)}.orange{color:var(--orange)}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:34px 0 16px}
+h2{font-size:19px;margin:0}h3{font-size:15px;margin:0 0 9px}
+.release-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.release-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.release-mark{display:flex;gap:11px;align-items:center}
+.dot{height:10px;width:10px;border-radius:50%;background:var(--green);box-shadow:0 0 13px #4adea577}
+.dot.p{background:var(--purple);box-shadow:0 0 13px #b49aff77}
+.release-version{font-size:26px;font-weight:800;margin:15px 0 5px}
+.bar{height:9px;background:#26334b;border-radius:8px;overflow:hidden;margin:18px 0 10px}
+.bar div{height:100%;background:linear-gradient(90deg,#6598ff,#a78bfa);border-radius:8px;transition:width .25s}
+.pipeline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:22px 0}
+.stage{flex:1;min-width:115px;background:#101a2b;border:1px solid var(--line);border-radius:12px;padding:16px 10px;text-align:center}
+.stage-icon{font-size:22px;margin-bottom:9px}
+.arrow{color:#647caa}
+.console{background:#070c16;border:1px solid #202e45;border-radius:12px;padding:18px;font-family:ui-monospace,monospace;font-size:12px;line-height:1.9;color:#b5c6e4;min-height:120px;white-space:pre-wrap;overflow-wrap:anywhere}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:15px 0}
+select{background:#101a2b;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px}
+.footer{margin-top:35px;text-align:center;color:#647594;font-size:12px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{flex-direction:column}.release-grid{grid-template-columns:1fr}nav{gap:9px}}
+@media(max-width:480px){header{padding:0 16px}nav .nav-link{display:none}main{padding:32px 15px}.grid{gap:10px}.card{padding:15px}.metric{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo">DF</span> DeployFlow</div>
+  <nav><span class="nav-link">Overview</span><span class="nav-link">Releases</span><span class="pill">● Deployment lab</span></nav>
+</header>
+<main>
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Continuous delivery · Experiment 3.2.2</div>
+      <h1>Ship with confidence.<br><span>Release without risk.</span></h1>
+      <p class="subtitle">A containerized deployment lab demonstrating automated builds, release health, and controlled canary rollouts with Spring Boot, Docker, and GitHub Actions.</p>
+      <div class="hero-actions">
+        <button class="primary" onclick="refreshData()">↻ Check deployment</button>
+        <button onclick="testRequests()">▷ Test API requests</button>
+      </div>
+    </div>
+    <div class="pill" id="healthBadge">● Checking service…</div>
+  </section>
+
+  <section class="grid">
+    <article class="card"><div class="metric-label">SERVICE STATUS</div><div class="metric green" id="healthMetric">Checking</div><div class="small">Spring Boot health endpoint</div></article>
+    <article class="card"><div class="metric-label">ACTIVE VERSION</div><div class="metric blue" id="versionMetric">—</div><div class="small" id="releaseLabel">Waiting for API</div></article>
+    <article class="card"><div class="metric-label">RELEASE CHANNEL</div><div class="metric purple" id="channelMetric">—</div><div class="small">Identified by running container</div></article>
+    <article class="card"><div class="metric-label">API CHECKS</div><div class="metric orange" id="checkMetric">0 / 0</div><div class="small">Successful / total requests</div></article>
+  </section>
+
+  <div class="section-head"><h2>Release environments</h2><span class="small">Live container metadata</span></div>
+  <section class="release-grid">
+    <article class="card">
+      <div class="release-title"><div class="release-mark"><span class="dot"></span><h3>Stable release</h3></div><span class="pill">BASELINE</span></div>
+      <div class="release-version">v1.0.0</div><div class="small">Production baseline · port 8081 internally</div>
+      <div class="bar"><div style="width:100%"></div></div><div class="small">Baseline deployment target</div>
+    </article>
+    <article class="card">
+      <div class="release-title"><div class="release-mark"><span class="dot p"></span><h3>Canary release</h3></div><span class="pill" style="color:var(--purple);border-color:#514077;background:#261d3e">CANDIDATE</span></div>
+      <div class="release-version">v2.0.0</div><div class="small">Candidate release · port 8082 internally</div>
+      <div class="bar"><div style="width:10%"></div></div><div class="small">Illustrative 10% canary target; actual routing is configured separately</div>
+    </article>
+  </section>
+
+  <div class="section-head"><h2>Deployment pipeline</h2><span class="small">Build → test → publish → release</span></div>
+  <section class="card">
+    <div class="pipeline">
+      <div class="stage"><div class="stage-icon">⌘</div><strong>Git push</strong><div class="small">Source code</div></div><span class="arrow">→</span>
+      <div class="stage"><div class="stage-icon">✓</div><strong>Test</strong><div class="small">Maven checks</div></div><span class="arrow">→</span>
+      <div class="stage"><div class="stage-icon">▣</div><strong>Build image</strong><div class="small">Docker</div></div><span class="arrow">→</span>
+      <div class="stage"><div class="stage-icon">⇧</div><strong>Publish</strong><div class="small">Registry</div></div>
+    </div>
+    <p class="small">GitHub Actions will run this pipeline after the workflow is committed and pushed to GitHub.</p>
+  </section>
+
+  <div class="section-head"><h2>API request console</h2><span class="small">Live results from your browser</span></div>
+  <section class="card">
+    <div class="controls">
+      <select id="endpoint"><option value="/api/health">GET /api/health</option><option value="/api/version">GET /api/version</option><option value="/api/deployment">GET /api/deployment</option><option value="/actuator/health">GET /actuator/health</option></select>
+      <button class="primary" onclick="testEndpoint()">Send request</button>
+      <button onclick="testRequests()">Run all checks</button>
+    </div>
+    <div class="console" id="console">DeployFlow console ready.
+Select an endpoint and send your first request.</div>
+  </section>
+  <div class="footer">DeployFlow · Spring Boot + Docker + GitHub Actions · Experiment 3.2.2</div>
+</main>
+<script>
+let successful = 0, total = 0;
+async function api(path) {
+  const response = await fetch(path, {headers:{"Accept":"application/json"}});
+  const data = await response.json();
+  if (!response.ok) throw new Error("HTTP " + response.status);
+  return data;
+}
+function log(message) {
+  document.getElementById("console").textContent =
+    new Date().toLocaleTimeString() + "  " + message;
+}
+async function refreshData() {
+  const badge = document.getElementById("healthBadge");
+  try {
+    const [health, version] = await Promise.all([api("/api/health"), api("/api/version")]);
+    document.getElementById("healthMetric").textContent = health.status;
+    document.getElementById("healthMetric").className = "metric green";
+    document.getElementById("versionMetric").textContent = "v" + version.version;
+    document.getElementById("releaseLabel").textContent = "Application version";
+    document.getElementById("channelMetric").textContent = version.release;
+    badge.textContent = "● Service online";
+    badge.style.color = "var(--green)";
+    log("Health: " + JSON.stringify(health, null, 2) +
+        "\nVersion: " + JSON.stringify(version, null, 2));
+  } catch (error) {
+    document.getElementById("healthMetric").textContent = "Offline";
+    document.getElementById("healthMetric").className = "metric orange";
+    badge.textContent = "● API unavailable";
+    badge.style.color = "var(--orange)";
+    log("Could not reach the API. Start the application or Docker Compose first.\n" + error);
+  }
+}
+async function testEndpoint() {
+  const path = document.getElementById("endpoint").value;
+  total++;
+  try {
+    const result = await api(path);
+    successful++;
+    log("GET " + path + " → HTTP 200\n\n" + JSON.stringify(result, null, 2));
+  } catch (error) {
+    log("GET " + path + " → FAILED\n" + error);
+  }
+  document.getElementById("checkMetric").textContent = successful + " / " + total;
+}
+async function testRequests() {
+  const paths = ["/api/health", "/api/version", "/api/deployment", "/actuator/health"];
+  const results = [];
+  for (const path of paths) {
+    total++;
+    try {
+      const data = await api(path);
+      successful++;
+      results.push("PASS  GET " + path + "  HTTP 200\n" + JSON.stringify(data));
+    } catch (error) {
+      results.push("FAIL  GET " + path + "  " + error);
+    }
+  }
+  document.getElementById("checkMetric").textContent = successful + " / " + total;
+  log(results.join("\n\n"));
+}
+refreshData();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: kafka-reliability-lab
+
+  thymeleaf:
+    cache: false
+
+  datasource:
+    url: jdbc:h2:file:./data/kafka-reliability;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  sql:
+    init:
+      mode: always
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    consumer:
+      group-id: reliability-lab-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.value.default.type: com.experiment.kafkareliability.model.PostEvent
+        spring.json.trusted.packages: com.experiment.kafkareliability.model
+
+server:
+  port: 8080
+
+app:
+  kafka:
+    topic: scheduled-posts
+    dlq-topic: scheduled-posts.DLT
+    retry-attempts: 3
+    retry-initial-interval-ms: 1000
+    retry-multiplier: 2.0
+    retry-max-interval-ms: 10000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+info:
+  app:
+    name: Kafka Reliability Lab
+    experiment: "3.1.1"

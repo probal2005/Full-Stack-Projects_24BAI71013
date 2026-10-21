@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1020">
+    <title>Reliability Lab | Experiment 3.1.1</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" href="/">
+            <div class="brand-mark">R<span>.</span></div>
+            <div>
+                <div class="brand-name">Reliability<span>Lab</span></div>
+                <div class="brand-caption">EVENT OPERATIONS</div>
+            </div>
+        </a>
+
+        <div class="workspace-label">WORKSPACE</div>
+        <nav class="nav-menu">
+            <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Overview</a>
+            <a class="nav-item" href="#publish"><span class="nav-icon">↗</span> Publish event</a>
+            <a class="nav-item" href="#activity"><span class="nav-icon">≋</span> Event activity</a>
+            <a class="nav-item" href="#reliability"><span class="nav-icon">◈</span> Reliability</a>
+        </nav>
+
+        <div class="sidebar-spacer"></div>
+
+        <div class="sidebar-experiment">
+            <div class="experiment-icon">03</div>
+            <div>
+                <div class="experiment-label">CURRENT EXPERIMENT</div>
+                <div class="experiment-title">Kafka Reliability</div>
+                <div class="experiment-subtitle">Retry · DLQ · Idempotency</div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <span class="online-dot"></span>
+            Local development environment
+            <div class="version-label">EXPERIMENT 3.1.1 · V1.0.0</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="breadcrumb">Experiments <span>/</span> <strong>3.1.1</strong></div>
+            <div class="topbar-right">
+                <div class="system-status"><span class="online-dot"></span><span id="systemStatus">Connecting...</span></div>
+                <button class="icon-button" id="refreshButton" title="Refresh dashboard" aria-label="Refresh dashboard">↻</button>
+                <div class="avatar">RL</div>
+            </div>
+        </header>
+
+        <section class="page-heading" id="overview">
+            <div>
+                <div class="eyebrow"><span class="eyebrow-line"></span> DISTRIBUTED SYSTEMS LAB</div>
+                <h1>Event reliability <span>center.</span></h1>
+                <p class="page-description">Observe, test, and understand how Kafka events behave when things go wrong.</p>
+            </div>
+            <div class="heading-actions">
+                <div class="live-indicator"><span class="pulse-dot"></span> LIVE MONITORING</div>
+                <div class="last-updated">Updated <span id="lastUpdated">—</span></div>
+            </div>
+        </section>
+
+        <section class="metrics-grid" aria-label="Event metrics">
+            <article class="metric-card metric-primary">
+                <div class="metric-top"><span class="metric-label">TOTAL EVENTS</span><span class="metric-symbol purple">↗</span></div>
+                <div class="metric-value" id="totalEvents">—</div>
+                <div class="metric-bottom"><span class="metric-dot purple-bg"></span> Unique events observed</div>
+                <div class="metric-decoration decoration-purple"></div>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top"><span class="metric-label">SUCCESSFULLY PROCESSED</span><span class="metric-symbol green">✓</span></div>
+                <div class="metric-value" id="processed">—</div>
+                <div class="metric-bottom"><span class="metric-dot green-bg"></span> Completed business operations</div>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top"><span class="metric-label">RETRY ATTEMPTS</span><span class="metric-symbol amber">↻</span></div>
+                <div class="metric-value" id="retries">—</div>
+                <div class="metric-bottom"><span class="metric-dot amber-bg"></span> Recorded retry attempts</div>
+            </article>
+            <article class="metric-card">
+                <div class="metric-top"><span class="metric-label">DEAD-LETTER EVENTS</span><span class="metric-symbol red">!</span></div>
+                <div class="metric-value" id="deadLetter">—</div>
+                <div class="metric-bottom"><span class="metric-dot red-bg"></span> Events routed to the DLQ</div>
+            </article>
+        </section>
+
+        <section class="content-grid">
+            <article class="panel publish-panel" id="publish">
+                <div class="panel-heading">
+                    <div>
+                        <div class="section-kicker">PRODUCER</div>
+                        <h2>Publish an event</h2>
+                        <p class="panel-description">Send a scheduled-post event into the Kafka pipeline.</p>
+                    </div>
+                    <div class="panel-icon purple-icon">↗</div>
+                </div>
+
+                <form id="eventForm">
+                    <label for="postContent">Post content <span class="required">*</span></label>
+                    <textarea id="postContent" name="content" maxlength="2000"
+                              placeholder="Write something to publish through Kafka..." required></textarea>
+                    <div class="field-meta"><span>Maximum 2,000 characters</span><span id="characterCount">0 / 2000</span></div>
+
+                    <label for="scheduledAt">Scheduled time <span class="optional">(optional)</span></label>
+                    <input id="scheduledAt" name="scheduledAt" type="datetime-local">
+
+                    <div class="failure-control">
+                        <div class="failure-icon">⚡</div>
+                        <div class="failure-copy">
+                            <strong>Simulate processing failure</strong>
+                            <span>Force this event to fail so you can observe retries and DLQ routing.</span>
+                        </div>
+                        <label class="switch" for="simulateFailure">
+                            <input type="checkbox" id="simulateFailure" name="simulateFailure">
+                            <span class="switch-track"></span>
+                        </label>
+                    </div>
+
+                    <div class="failure-warning" id="failureWarning" hidden>
+                        Failure simulation is enabled. This event should exhaust its retries and reach the DLQ.
+                    </div>
+
+                    <button type="submit" class="primary-button" id="publishButton">
+                        <span>Publish to Kafka</span><span class="button-arrow">→</span>
+                    </button>
+                    <div class="form-footnote"><span class="secure-icon">◈</span> Asynchronous processing · At-least-once delivery</div>
+                </form>
+            </article>
+
+            <article class="panel reliability-panel" id="reliability">
+                <div class="panel-heading">
+                    <div>
+                        <div class="section-kicker">RESILIENCE ENGINE</div>
+                        <h2>Reliability controls</h2>
+                        <p class="panel-description">The mechanisms that keep event processing resilient.</p>
+                    </div>
+                    <div class="panel-icon green-icon">◈</div>
+                </div>
+
+                <div class="reliability-list">
+                    <div class="reliability-item">
+                        <div class="reliability-icon retry-icon">↻</div>
+                        <div class="reliability-copy">
+                            <strong>Exponential backoff</strong>
+                            <span>Increasing delays between retry attempts.</span>
+                            <div class="delay-chips"><span>1s</span><span>2s</span><span>4s</span><span class="chip-muted">Max 10s</span></div>
+                        </div>
+                        <span class="status-pill status-active">ACTIVE</span>
+                    </div>
+                    <div class="reliability-item">
+                        <div class="reliability-icon dlq-icon">⇣</div>
+                        <div class="reliability-copy">
+                            <strong>Dead-letter queue</strong>
+                            <span>Captures events after retry exhaustion.</span>
+                            <div class="topic-label">scheduled-posts.DLT</div>
+                        </div>
+                        <span class="status-pill status-active">ACTIVE</span>
+                    </div>
+                    <div class="reliability-item">
+                        <div class="reliability-icon idempotency-icon">✓</div>
+                        <div class="reliability-copy">
+                            <strong>Idempotent processing</strong>
+                            <span>Unique event IDs tracked in the database.</span>
+                            <div class="topic-label">H2 · processed_events</div>
+                        </div>
+                        <span class="status-pill status-active">ACTIVE</span>
+                    </div>
+                </div>
+
+                <div class="pipeline-box">
+                    <div class="pipeline-title">EVENT JOURNEY</div>
+                    <div class="pipeline">
+                        <div class="pipeline-node"><span class="pipeline-node-icon">↗</span><span>Producer</span></div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-node"><span class="pipeline-node-icon">◉</span><span>Kafka</span></div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-node"><span class="pipeline-node-icon">⚙</span><span>Consumer</span></div>
+                    </div>
+                    <div class="pipeline-outcomes">
+                        <span class="outcome-success">✓ Success</span>
+                        <span class="outcome-retry">↻ Retry</span>
+                        <span class="outcome-dlq">⇣ DLQ</span>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel activity-panel" id="activity">
+            <div class="activity-heading">
+                <div>
+                    <div class="section-kicker">OBSERVABILITY</div>
+                    <h2>Event activity</h2>
+                    <p class="panel-description">Recent publications, processing outcomes, and retry activity.</p>
+                </div>
+                <div class="activity-actions">
+                    <select id="statusFilter" aria-label="Filter events by status">
+                        <option value="ALL">All statuses</option>
+                        <option value="PROCESSED">Processed</option>
+                        <option value="PUBLISHED">Published</option>
+                        <option value="RETRYING">Retrying</option>
+                        <option value="DLQ">Dead letter</option>
+                        <option value="DUPLICATE">Duplicate</option>
+                        <option value="FAILED">Failed</option>
+                    </select>
+                    <button class="secondary-button" id="activityRefresh">↻ Refresh</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>EVENT</th>
+                        <th>STATUS</th>
+                        <th>MESSAGE</th>
+                        <th>ATTEMPTS</th>
+                        <th>TIME</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="eventsTable">
+                    <tr><td colspan="6" class="empty-state">Connecting to the event stream...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <span id="eventCount">Loading activity...</span>
+                <span class="auto-refresh-label"><span class="pulse-dot"></span> Auto-refresh every 3 seconds</span>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <span>RELIABILITY LAB <span class="footer-separator">/</span> EXPERIMENT 3.1.1</span>
+            <span>Built for distributed systems learning <span class="footer-heart">◆</span></span>
+        </footer>
+    </main>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

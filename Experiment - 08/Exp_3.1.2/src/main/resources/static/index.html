@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Event Reliability Lab | Experiment 3.1.2</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">E</span><div><b>Event Reliability</b><small>ENGINEERING LAB</small></div></div>
+      <div class="side-label">WORKSPACE</div>
+      <a class="nav active" href="/">◈ <span>Overview</span></a>
+      <a class="nav" href="#publish">＋ <span>Publish event</span></a>
+      <a class="nav" href="#activity">≋ <span>Event activity</span></a>
+      <div class="sidebar-bottom"><span class="pulse"></span><div><b>Kafka broker</b><small>localhost:9093</small></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow">DISTRIBUTED SYSTEMS / EXPERIMENT 3.1.2</div><h1>Reliability control center</h1><p>Retries, dead-letter routing and idempotent processing.</p></div>
+        <div class="live-pill"><span class="pulse"></span> LIVE MONITORING</div>
+      </header>
+
+      <section class="hero">
+        <div><div class="eyebrow light">EVENT-DRIVEN ARCHITECTURE</div><h2>Failures happen.<br><span>Lost events don't have to.</span></h2><p>Observe event delivery, simulate processing faults, and verify recovery behavior in real time.</p><a class="hero-link" href="#publish">Run a test <span>↗</span></a></div>
+        <div class="flow"><div class="flow-node">PRODUCER</div><div class="flow-arrow">→</div><div class="flow-node primary">KAFKA</div><div class="flow-arrow">→</div><div class="flow-node">CONSUMER</div><div class="flow-down">↘ RETRY TOPICS → DLQ</div></div>
+      </section>
+
+      <section class="metrics">
+        <article class="metric"><div class="metric-top"><span>Total published</span><span class="metric-icon">↗</span></div><strong id="totalPublished">0</strong><small>Events sent to Kafka</small></article>
+        <article class="metric"><div class="metric-top"><span>Processed</span><span class="metric-icon green">✓</span></div><strong id="processed">0</strong><small>Successful first-time processing</small></article>
+        <article class="metric"><div class="metric-top"><span>Retry attempts</span><span class="metric-icon amber">↻</span></div><strong id="retries">0</strong><small>Transient or simulated failures</small></article>
+        <article class="metric"><div class="metric-top"><span>Dead-letter queue</span><span class="metric-icon red">!</span></div><strong id="deadLetter">0</strong><small>Events exhausted retries</small></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel" id="publish">
+          <div class="panel-head"><div><div class="eyebrow">TEST HARNESS</div><h3>Publish a test event</h3></div><span class="tag">POST /api/events</span></div>
+          <form id="eventForm">
+            <label for="content">Event payload</label>
+            <textarea id="content" maxlength="500" required placeholder="e.g. Order #1042 created"></textarea>
+            <label for="eventId">Event ID <span class="optional">Optional — reuse it to test idempotency</span></label>
+            <input id="eventId" placeholder="Leave empty to generate a UUID">
+            <div class="form-row">
+              <div><label for="failAttempts">Transient failures</label><select id="failAttempts"><option value="0">0 — process normally</option><option value="1">1 — retry once</option><option value="2">2 — retry twice</option><option value="3">3 — retry three times</option></select></div>
+              <div class="check-card"><input type="checkbox" id="alwaysFail"><label for="alwaysFail">Always fail <small>Route to DLQ</small></label></div>
+            </div>
+            <button class="btn primary" type="submit">↗ Publish event</button>
+            <p id="formMessage" class="form-message" aria-live="polite"></p>
+          </form>
+        </article>
+
+        <article class="panel principles">
+          <div class="panel-head"><div><div class="eyebrow">RELIABILITY PATTERNS</div><h3>Processing safeguards</h3></div></div>
+          <div class="principle"><span class="principle-icon blue">↻</span><div><b>Exponential backoff</b><p>Retry delays increase: 1s, 2s, then 4s.</p></div><span class="mini-status">ACTIVE</span></div>
+          <div class="principle"><span class="principle-icon red">⇢</span><div><b>Dead-letter routing</b><p>Four total attempts before the event reaches the DLQ.</p></div><span class="mini-status">ACTIVE</span></div>
+          <div class="principle"><span class="principle-icon green">✓</span><div><b>Idempotent consumer</b><p>Repeated IDs are ignored after successful processing.</p></div><span class="mini-status">ACTIVE</span></div>
+          <div class="note"><b>Experiment tip</b><p>Set transient failures to 2 to observe retries followed by success. Enable Always fail to verify dead-letter routing.</p></div>
+        </article>
+      </section>
+
+      <section class="panel activity-panel" id="activity">
+        <div class="panel-head activity-head"><div><div class="eyebrow">LIVE EVENT STREAM</div><h3>Processing activity</h3></div><div class="activity-actions"><span class="refresh-label"><span class="pulse"></span> Auto-refresh · 3s</span><button id="refreshBtn" class="btn secondary" type="button">↻ Refresh</button></div></div>
+        <div class="table-wrap"><table><thead><tr><th>EVENT</th><th>PAYLOAD</th><th>ATTEMPTS</th><th>STATUS</th><th>UPDATED</th><th>ACTION</th></tr></thead><tbody id="eventRows"><tr><td colspan="6" class="empty">Connecting to the API…</td></tr></tbody></table></div>
+        <div class="table-footer"><span id="eventCount">0 tracked events</span><span>Event tracking is in-memory for this lab demo.</span></div>
+      </section>
+      <footer>EXPERIMENT 3.1.2 <span>Kafka · Spring Boot · Retry topics · Idempotency</span></footer>
+    </main>
+  </div>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
